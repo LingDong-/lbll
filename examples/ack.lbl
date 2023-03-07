@@ -1,0 +1,41 @@
+^ 4 ^ 1 @@ack
+
+ntos ~ >>|
+
+%%
+
+@:ack % -> n -> m
+
+  @.r
+
+  lt m 2 ? * @@.
+    add n m add ~ 1
+    %%
+  @.
+
+  eq m 2 ? * @@.
+    mul n 2 add ~ 3
+    %%
+  @.
+
+  ;
+  eq m 3 ? * @@.
+    pow 2 n sub ~ 1 mul ~ 8 add ~ 5
+    %%
+  @.
+  ;
+
+  eq n 0 ? * @@.
+    sub m 1 => m
+    ^ 1 => n
+    @@.r
+  @.
+
+  
+  ^ m sub n 1 @@ack
+  sub m 1
+  rev -2
+  @@ack
+
+
+%%

@@ -1,0 +1,74 @@
+^^ 0 4 -> i -> j -> p -> q
+
+; elementary cellular automaton ;
+; ------------------------------;
+; random rule:                  ;
+; rand mul ~ 256 flor ~ -> ru "rule #" >> ntos ru >>| ;
+;                               ;
+; or pick rule:                 ;
+^ 150 -> ru
+; ------------------------------;
+; random seed:                  ;
+rand mul ~ 65535 flor ~ rand mul ~ 65535 flor ~
+rand mul ~ 65535 flor ~ rand mul ~ 65535 flor ~
+rand mul ~ 65535 flor ~ rand mul ~ 65535 flor ~
+rand mul ~ 65535 flor ~ rand mul ~ 65535 flor ~
+; or fixed seed:                ;
+; ^ 0 ^ 0 ^ 0 ^ 0 ^ 1 ^ 0 ^ 0 ^ 0 ;
+; ------------------------------;
+
+^ 0 => i
+
+@li
+
+  ^^ 0 8
+  ^ 1 => j
+  @lj
+
+    eqz i ? @@. *
+      ^ j @@nbr => p
+      ushr ru p uand ~ 1 => q
+    @@d @.
+      ^ j @@gcel => q
+    @d
+
+    ^ j ^ q @@scel
+
+    eqz q ? * @@.
+      unpx j i
+    @@b @.
+      px j i
+    @b
+
+  add j 1 => j lt j 127 ? @@lj *
+
+  roll 0 8
+  droq 8
+
+  show
+add i 1 => i lt i 64 ? @@li *
+
+
+%%
+
+@:gcel % -> n
+  imod n 16 -> j -> i
+  peek i ushr ~ j uand ~ 1
+%%
+
+@:scel % -> x -> n
+  imod n 16 -> j add ~ 8 -> i
+  ushl 1 j unot ~        -> msk
+  
+  peek i uand ~ msk
+  ushl x j uor ~ ~
+
+  edit i ~
+%%
+
+@:nbr % -> n
+  sub n 1 @@gcel ushl ~ 2
+    ^ n   @@gcel ushl ~ 1
+  add n 1 @@gcel
+  uor ~ ~ uor ~ ~
+%%

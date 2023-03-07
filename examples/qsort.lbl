@@ -1,0 +1,35 @@
+^ 1 ^ 9 ^ 3 ^ 4 ^ 5 ^ 2 ^ 7 ^ 0 ^ 8
+
+^ 0 sub # 2 @@qsrt 
+
+rev 0
+@l
+  ntos ~ >> 
+  eqz # ? @@. * ", " >> @@l
+@. >>|
+
+%%
+
+@:qsrt % -> r0 -> l0
+  ^^ 0 3 -> l -> r -> pv
+@.Q
+  ^ l0 => l
+  ^ r0 => r
+  sub r l leq ~ 1 ? * @@. %% @.
+  peek l => pv
+  @.L leq l r ? * @@.LL
+    @.L0 peek l lt ~ pv ? * @@.L1
+      add l 1 => l
+    @@.L0 
+    @.L1 peek r gt ~ pv ? * @@.L2
+      sub r 1 => r
+    @@.L1
+    @.L2 leq l r ? * @@.L
+      swap l r
+      add l 1 => l
+      sub r 1 => r
+  @@.L @.LL
+  ^ l0 ^ r @@qsrt
+  ^ l => l0 @@.Q
+%%
+

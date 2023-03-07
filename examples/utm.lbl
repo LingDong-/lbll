@@ -1,0 +1,66 @@
+; universal turing machine ;
+
+^ 16 -> nt
+^^ 0 nt
+^ 0  -> Q
+^ 3  -> Qz
+div nt 2 -> I
+^ 0  -> S
+
+; transitions (busy beaver 3) ;
+
+^ 0 ^ 0 ^ 1 ^ 1 ^  1
+^ 0 ^ 1 ^ 2 ^ 1 ^ -1
+^ 1 ^ 0 ^ 0 ^ 1 ^ -1
+^ 1 ^ 1 ^ 1 ^ 1 ^  1
+^ 2 ^ 0 ^ 1 ^ 1 ^ -1
+^ 2 ^ 1 ^ 3 ^ 1 ^  0
+
+@@tmdr
+
+@l
+  @@tmstp
+  @@tmdr
+eq Q Qz ? * @@l
+
+%%
+
+@:tmstp % 
+  ^^ 0 5 -> qa -> rs -> qb -> ws -> mv
+  ^ nt -> off
+
+  @.l
+    add off 0 peek ~ => qa
+    add off 1 peek ~ => rs
+    add off 2 peek ~ => qb
+    add off 3 peek ~ => ws
+    add off 4 peek ~ => mv
+
+    peek I => S
+    eq Q qa eq rs S vand ~ ~ ? * @@.
+      edit I ws
+      ^ qb => Q
+      add I mv => I
+      @@.el
+    @.
+    
+    add off 5 => off
+  @@.l
+  @.el
+%%
+
+@:tmdr %
+  ^ 0 -> i
+  ntos Q >>
+  "<" >>
+  @.l
+    eq I i ? 91 32 ^ 1 >>
+    peek i ntos ~ >>
+    eq I i ? 93 32 ^ 1 >>
+    add i 1 => i
+  geq i nt ? * @@.l
+  ">" >>|
+%%
+
+
+

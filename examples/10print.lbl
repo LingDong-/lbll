@@ -1,0 +1,8 @@
+;@L10 rand rond ~ mul ~ 45 add ~ 47 ^ 1 >> @@L10;
+
+
+;graphical version:;
+^ 0 -> i @L10
+rand rond ~ mul ~ 45 add ~ 47 ^ 1
+imod i 32 mul ~ 4 rev -2 text ~ ~
+add i 1 => i lt i 256 ? @@L10 *

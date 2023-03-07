@@ -1,0 +1,17 @@
+^ 8 -> pin
+^ 0 -> a
+^ 0 -> b
+
+iomo pin 1
+
+@l
+
+tmms sin ~ mul ~ 8 add ~ 10 => a
+sub 20 a => b
+
+iowd pin 1
+w8ms a
+iowd pin 0
+w8ms b
+
+@@l

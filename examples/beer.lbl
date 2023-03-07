@@ -1,0 +1,15 @@
+^ 99 -> n
+
+@loop
+
+ntos n >> " bottles of beer on the wall" >>|
+
+ntos n >> " bottles of beer" >>|
+
+"take one down, pass it around" >>|
+
+sub n 1 => n
+
+ntos n >> " bottles of beer on the wall" >>|
+
+eqz n ? * @@loop

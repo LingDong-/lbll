@@ -1,0 +1,78 @@
+; 3d sphere with floyd-steinberg dithering ;
+
+^^ 0 66
+
+^ 0 -> x
+^ 0 -> y
+^ 0 -> v
+^ 0 -> u
+^ 0 -> qe
+^ 0 -> qn
+^ 0 -> y0
+^ 0 -> y1
+^ 0 -> y2
+
+@lx
+  ^ 0 => y
+  ^ 0 => qn
+  ^^ 0 66
+  @ly
+
+    ^ x ^ y @@sphr add y 1 peek ~ add ~ ~ add qn ~ => v
+
+    geq v 0.5 ? 1 0 => u
+
+    sub v u => qe
+
+    add y 66 => y0
+    add y 67 => y1
+    add y 68 => y2
+
+    mul qe 7 div ~ 16 => qn
+    mul qe 3 div ~ 16 peek y0 add ~ ~ edit y0 ~
+    mul qe 5 div ~ 16 peek y1 add ~ ~ edit y1 ~
+    mul qe 1 div ~ 16 peek y2 add ~ ~ edit y2 ~
+
+    eqz u ? @@. *
+      px x y
+    @.
+
+  add y 1 => y lt y 64 ? @@ly *
+
+  roll 0 66
+  droq -66
+
+  show
+
+add x 1 => x lt x 64 ? @@lx *
+
+%%
+
+
+@:sphr % -> y -> x
+  ^ 30 -> R
+  sub x 32 => x
+  sub y 32 => y
+  mul x x mul y y add ~ ~ mul R R sub ~ ~ -> a
+  geq a 0 ? * @@.e
+    ^ x ^ y sqrt a @@nrmlz
+    ^ 0.45 ^ 0.45 ^ -0.76 @@dot
+    pow ~ 2 add ~ 0.1 -> b
+    gt b 1 ? 1 b
+    lt ~ 0 ? 0 b
+%%
+@.e
+^ 0
+%%
+
+
+@:nrmlz % -> z -> y -> x
+  mul x x mul y y mul z z add ~ ~ add ~ ~ sqrt ~ -> l
+  div x l
+  div y l
+  div z l
+%%
+
+@:dot % -> z1 -> y1 -> x1 -> z0 -> y0 -> x0
+  mul x0 x1 mul y0 y1 mul z0 z1 add ~ ~ add ~ ~
+%%

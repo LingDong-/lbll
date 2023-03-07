@@ -1,0 +1,59 @@
+; floyd-steinberg dithering ;
+
+^^ 0 66
+
+^ 0 -> x
+^ 0 -> y
+^ 0 -> v
+^ 0 -> u
+^ 0 -> qe
+^ 0 -> qn
+^ 0 -> y0
+^ 0 -> y1
+^ 0 -> y2
+
+@lx
+  ^ 0 => y
+  ^ 0 => qn
+  ^^ 0 66
+  @ly
+
+    ^ x ^ y @@ripo add y 1 peek ~ add ~ ~ add qn ~ => v
+
+    geq v 0.5 ? 1 0 => u
+
+    sub v u => qe
+
+    add y 66 => y0
+    add y 67 => y1
+    add y 68 => y2
+
+    mul qe 7 div ~ 16 => qn
+    mul qe 3 div ~ 16 peek y0 add ~ ~ edit y0 ~
+    mul qe 5 div ~ 16 peek y1 add ~ ~ edit y1 ~
+    mul qe 1 div ~ 16 peek y2 add ~ ~ edit y2 ~
+
+    eqz u ? @@. *
+      px x y
+    @.
+
+  add y 1 => y lt y 64 ? @@ly *
+
+  roll 0 66
+  droq -66
+
+  show
+
+add x 1 => x lt x 128 ? @@lx *
+
+%%
+
+
+@:ripo % -> y -> x
+
+  sub x 64 div ~ 10 -> xx
+  sub y 32 div ~ 10 -> yy
+  mul xx xx mul yy yy add ~ ~ sqrt ~ 
+  mul ~ 3 sin ~ mul ~ 0.35 add ~ 0.5
+
+%%

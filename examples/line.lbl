@@ -1,0 +1,52 @@
+; bresenham's line algorithm ;
+
+^ 10 -> i
+
+@l
+
+rand mul ~ 128
+rand mul ~ 64 
+rand mul ~ 128
+rand mul ~ 64 
+
+@@line
+
+sub i 1 => i
+
+^ i ? @@l *
+
+%%
+
+@:line % rev -4 
+  rond ~ -> x0 
+  rond ~ -> y0 
+  rond ~ -> x1 
+  rond ~ -> y1
+
+  sub x1 x0 abs ~         -> dx
+  lt  x0 x1 ? 1 -1        -> sx
+  sub y1 y0 abs ~ neg ~   -> dy
+  lt  y0 y1 ? 1 -1        -> sy
+  add dx dy               -> err
+  ^ 0 -> e2
+
+  @.l
+  px x0 y0
+  eq x0 x1 eq y0 y1 vand ~ ~ ? @@.el *
+  mul 2 err => e2
+  geq e2 dy ? * @@.
+    eq x0 x1 ? @@.el *
+    add err dy => err
+    add x0 sx => x0
+  @.
+  leq e2 dx ? * @@.
+    eq y0 y1 ? @@.el *
+    add err dx => err
+    add y0 sy => y0
+  @.
+
+  @@.l
+  @.el
+
+%%
+

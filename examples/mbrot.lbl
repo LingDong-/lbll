@@ -1,0 +1,53 @@
+; mandelbrot set ;
+
+^ 64 ^ 32 -> H -> W
+
+^ -2 -> L
+^  2 -> R
+^ -1 -> T
+^  1 -> B
+
+^ 0 ^ 0 ^ 0 -> i -> j -> k
+
+sub R L div ~ W -> dx
+sub B T div ~ H -> dy
+
+^ 0 ^ 0 ^ 0 ^ 0 ^ 0 ^ 0 -> xx -> yy -> a -> b -> x -> y
+
+@.l
+
+  mul i dy add ~ T => y
+  ^ 0 => j
+
+  @.ll
+    
+    mul j dx add ~ L => x
+    ^ x => xx
+    ^ y => yy
+    ^ 0 => k
+
+    @.lll
+
+      mul xx xx => a
+      mul yy yy => b
+
+      add a b gt ~ 4 ? @@. *
+
+      mul xx yy mul ~ 2 add ~ y => yy
+      sub  a  b         add ~ x => xx
+      
+    add k 1 => k gt k 10 ? * @@.lll
+
+    @.
+
+    gt k 10 ? * @@.
+      px j i
+    @.
+
+
+  add j 1 => j geq j W ? * @@.ll
+
+  show
+
+add i 1 => i geq i H ? * @@.l
+

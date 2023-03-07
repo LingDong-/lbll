@@ -1,0 +1,23 @@
+rand -> x
+rand -> y
+^ 0 -> n
+^ 0 -> k
+
+@l
+  rand => n
+  lt n 0.333 ? * @@.
+    div x 2 => x
+    div y 2 => y
+  @@z @. lt n 0.667 ? * @@.
+    add 0.5 x div ~ 2 => x
+    add   1 y div ~ 2 => y
+  @@z @.
+    add   1 x div ~ 2 => x
+              div y 2 => y
+  @z
+  mul y 64 sub 64 ~ mul x 74 add ~ 27 
+  px ~ ~
+
+  show
+
+add k 1 => k lt k 2000 ? @@l *

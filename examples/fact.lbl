@@ -1,0 +1,16 @@
+^ 7 -> x
+"factorial of " >> ntos x >> " is " >>
+^ x @@fact ntos ~ >>|
+
+%%
+
+
+@:fact % -> x
+  eq x 1 ? @@. *
+    sub x 1  @@fact
+    mul ~ x
+    %%
+  @.
+    ^ 1
+    %%
+
