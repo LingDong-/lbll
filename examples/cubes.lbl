@@ -1,0 +1,150 @@
+; ---------------------------------- ;
+; minimal 3D mesh wireframe renderer ;
+; ---------------------------------- ;
+
+; focal length ;
+^ 30 -> focl
+
+; vertices ;
+^ -1 ^ -1 ^ -1 ^  -1 ^ -1 ^ 1 ^  -1 ^ 1 ^ -1 ^  -1 ^ 1 ^ 1 
+^  1 ^ -1 ^ -1 ^   1 ^ -1 ^ 1 ^   1 ^ 1 ^ -1 ^   1 ^ 1 ^ 1
+; edges ;
+^ 0 ^ 1 ^   2 ^ 3 ^   4 ^ 5 ^   6 ^ 7
+^ 0 ^ 4 ^   1 ^ 5 ^   2 ^ 6 ^   3 ^ 7
+^ 0 ^ 2 ^   1 ^ 3 ^   4 ^ 6 ^   5 ^ 7
+
+^ -0.5 @@mrx
+
+^ 0 -> i
+
+@L
+  ^ 0.2 @@mry
+  ^ 48 ^ 64 @@mxm4
+  roll -48 16 droq -32
+  edit 59 4
+  imod i 4
+  mul ~ 32 add ~ 16
+  rev -2
+  mul ~ 32 add ~ 14
+  ^ 48 ^ 0 ^ 24 ^ 12 @@wire
+  show
+add i 1 => i lt i 8 ? @@L *
+%%
+
+; pinhole camera ;
+@:proj % -> z -> y -> x
+  mul x focl div ~ z
+  mul y focl div ~ z
+%%
+
+; draw wireframe ;
+@:wire % -> ne -> es -> vs -> mat -> oy -> ox
+  ^ 0 -> a
+  ^ 0 -> b
+  ^ 0 -> i
+  ^^ 0 4 -> x0 -> y0 -> x1 -> y1
+  @.L
+    mul i 2 add ~ es         peek ~ => a
+    mul i 2 add ~ es add ~ 1 peek ~ => b
+    mul a 3 add ~ vs         peek ~
+    mul a 3 add ~ vs add ~ 1 peek ~
+    mul a 3 add ~ vs add ~ 2 peek ~
+    ^ mat @@mxv
+    @@proj => y0 => x0
+
+    mul b 3 add ~ vs         peek ~
+    mul b 3 add ~ vs add ~ 1 peek ~
+    mul b 3 add ~ vs add ~ 2 peek ~
+    ^ mat @@mxv
+    @@proj => y1 => x1
+
+    add x0 ox add y0 oy
+    add x1 ox add y1 oy
+
+    @@line
+
+    ; show ;
+  add i 1 => i lt i ne ? @@.L *
+%%
+
+; bresenham's ;
+@:line %
+  rond ~ -> y1
+  rond ~ -> x1 
+  rond ~ -> y0 
+  rond ~ -> x0
+
+  sub x1 x0 abs ~         -> dx
+  lt  x0 x1 ? 1 -1        -> sx
+  sub y1 y0 abs ~ neg ~   -> dy
+  lt  y0 y1 ? 1 -1        -> sy
+  add dx dy               -> err
+  ^ 0 -> e2
+
+  @.l
+  px x0 y0
+  eq x0 x1 eq y0 y1 vand ~ ~ ? @@.el *
+  mul 2 err => e2
+  geq e2 dy ? * @@.
+    eq x0 x1 ? @@.el *
+    add err dy => err
+    add x0 sx => x0
+  @.
+  leq e2 dx ? * @@.
+    eq y0 y1 ? @@.el *
+    add err dx => err
+    add y0 sy => y0
+  @.
+
+  @@.l
+  @.el
+
+%%
+
+; matrix mult 4x4 ;
+@:mxm4 % -> B -> A
+  ^ 0 -> r 
+  ^ 0 -> c
+  @.lr
+    ^ 0 => c
+    @.lc
+      mul r 4 add A ~         peek ~   ^ B    add ~ c peek ~ mul ~ ~
+      mul r 4 add A ~ add ~ 1 peek ~ add B  4 add ~ c peek ~ mul ~ ~
+      mul r 4 add A ~ add ~ 2 peek ~ add B  8 add ~ c peek ~ mul ~ ~
+      mul r 4 add A ~ add ~ 3 peek ~ add B 12 add ~ c peek ~ mul ~ ~
+      add ~ ~ add ~ ~ add ~ ~
+    add c 1 => c lt c 4 ? @@.lc *
+  add r 1 => r lt r 4 ? @@.lr *
+%%
+
+; matrix mult vector ;
+@:mxv %  -> A -> z -> y -> x
+  ^ 0 -> r
+  @.l
+    mul r 4 add A ~         peek ~ mul ~ x
+    mul r 4 add A ~ add ~ 1 peek ~ mul ~ y
+    mul r 4 add A ~ add ~ 2 peek ~ mul ~ z
+    mul r 4 add A ~ add ~ 3 peek ~
+    add ~ ~ add ~ ~ add ~ ~
+  add r 1 => r lt r 4 ? @@.l *
+  -> w
+  div ~ w roll -3 1
+  div ~ w roll -3 1
+  div ~ w roll -3 1
+%%
+
+; x-axis rotation matrix ;
+@:mrx % -> a
+ ^ 1         ^ 0   ^ 0 ^ 0
+ ^ 0       cos a sin a ^ 0
+ ^ 0 sin a neg ~ cos a ^ 0
+ ^ 0         ^ 0   ^ 0 ^ 1
+%%
+
+; y-axis rotation matrix ;
+@:mry % -> a
+ cos a ^ 0 sin a neg ~ ^ 0
+   ^ 0 ^ 1         ^ 0 ^ 0
+ sin a ^ 0       cos a ^ 0
+   ^ 0 ^ 0         ^ 0 ^ 1
+%%

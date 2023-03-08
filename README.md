@@ -175,6 +175,8 @@ which compiles, flashes and opens the serial monitor (via arduino-cli)
 
 The Arduino project assumes the existance of an SD card, an SSD1306 I2C OLED display, and USB serial. You can delete the respective code if you don't have these on your board (but will need to figure out a way to store your programs and output results).
 
+On the SD card, it is assumed that there is a folder named LBLL, in it, a flat list of `.lbl` source codes. If there is a file named `index.lbl`, it will be executed automatically. Otherwise, it waits for USB serial input to tell it what to do.
+
 See the Makefile for more things you can do.
 
 

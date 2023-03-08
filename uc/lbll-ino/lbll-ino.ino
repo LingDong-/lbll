@@ -15,6 +15,7 @@
 #define BASEPATH "lbll/"
 
 void run_file(char* path){
+  oled_clear();
 
   C_FILE* fd = C_fopen(path,"r");
   
@@ -82,16 +83,24 @@ void setup() {
     run_file(BASEPATH"index.lbl");
   }
 
-  
+  oled_3x7string_direct(0 ,0, "waiting for serial connection...", 0);
+
+  int i = 0;
   while (!Serial){}
   File root = SD.open(BASEPATH);
+
+  oled_clear();
   while (1){
     File entry =  root.openNextFile();
     if (!entry){
       break;
     }
+    if (i < 16){
+      oled_3x7string_direct(i%8, (i/8) * 64 , entry.name(), 0);
+    }
     Serial.println(entry.name());
     entry.close();
+    i++;
   }
   Serial.println("enter base name of file to run.");
 
